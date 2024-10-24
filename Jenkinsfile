@@ -26,6 +26,22 @@ pipeline {
                 bat '"<path vers denpendency check>\\dependency-check-10.0.2-release\\dependency-check\\bin\\dependency-check.bat" --project "demo" --scan . --format HTML --out dependency-check-report.html --nvdApiKey 181c8fc5-2ddc-4d15-99bf-764fff8d50dc --disableAsse'
             }
         }
+            stage('ZAP Security Scan') {
+            steps {
+            script {
+            def appUrl = 'https://ed3a-105-73-96-62.ngrok-free.app'
+            bat "curl \"http://localhost:8081/JSON/spider/action/scan/?url=${appUrl}&recurse=true\"
+            sleep(60)
+            bat "curl \"http://localhost:8081/JSON/ascan/action/scan/?url=${appUrl}&recurse=true&in
+            sleep(300)
+            }
+            }
+            post {
+            always {
+            bat 'curl "http://localhost:8081/OTHER/core/other/htmlreport/" > zap_report1.html'
+            }
+            }
+            }
 
         stage('Deploy') {
             steps {
